@@ -118,7 +118,11 @@ If we want those kind of communications, to support things like subscriptions, w
 >> { id: 0, method: "subscribe_to_news", params: { cb: "news_update" } }
 << { id: 0, result: "news-sub-1" }
 …
-<< { method: "news_update", params: { title: "PBA dev compiles runtime in under 4 hours. Community demands to know their secrets" } }
+…
+<< { method: "news_update", params: {
+  subscription: "news-sub-1",
+  title: "PBA dev compiles runtime in under 4 hours. Here's their secret"
+} }
 ```
 
 ---
@@ -146,32 +150,20 @@ There was a turning point when they decided to write a proper spec with a set of
 
 **Notes:**
 
+TODO
+
 - The previous JSON-RPC implementation had inconsistencies that made it harder for developers to maintain compatibility across parachains.
 - A key motivation was to improve support for lightweight clients, which require a more optimized and reliable data-fetching mechanism.
 
 ---
 
-# JSON-RPC API Objectives
-
-- Accommodate multiple audiences<!-- .element: class="fragment" -->
-- Ensure clarity, efficiency, and scalability<!-- .element: class="fragment" -->
-- Address needs for security, reliability, and flexibility<!-- .element: class="fragment" -->
-
-**Notes:**
-
-- The JSON-RPC API is designed to cater to a diverse range of audiences, from application developers to node operators.
-- It aims to provide a robust and efficient interface for blockchain interaction while maintaining security and clarity.
-- The interface emphasizes performance and standardization, ensuring efficient communication across various use cases.
-
----
-
-# Key Changes & Improvements
+## Key Changes & Improvements
 
 - **Groups of functions:** Based on node capabilities
-
-<!-- .element: class="fragment" -->
-
 - **Stability and versioning:** Allowing improvements without breaking contracts.
+  - Functions are grouped by node capabilities: `chainHead`, `archive`, `sudo`, `transaction`, …
+  - Consistent naming: `{group}_{version}_{method}`: `chainHead_v1_follow`, `archive_v1_storage`, `sudo_unstable_pendingTransactions`, …
+  - Capability detection via the `rpc_methods` function
 
 <!-- .element: class="fragment" -->
 
@@ -191,67 +183,15 @@ There was a turning point when they decided to write a proper spec with a set of
 
 - The API reduces redundant calls, leading to lower latency and better efficiency.
 
----
-
-# Grouping Functions & Node Capabilities
-
-- Functions are grouped using a prefix with a version number (e.g., `chainHead_v1_follow`)
-
-<!-- .element: class="fragment" -->
-
 - Node types: Full, Light, Archive, Plain databases
-
-<!-- .element: class="fragment" -->
-
-- Capability detection via the `rpc_methods` function
-
-<!-- .element: class="fragment" -->
-
-**Notes:**
 
 - Grouping functions using prefixes with versioning ensures clear evolution and compatibility.
 - Each node type supports functions based on its capabilities, ensuring efficient and relevant operations.
 - Clients should always use `rpc_methods` to verify supported functions on a given node.
 
----
-
-# Upgradability & Versioning
-
-- Groups are versioned and self-contained (e.g., `foo_v1`, `foo_v2`)
-
-<!-- .element: class="fragment" -->
-
-- Higher versions indicate preferred methods, while older versions become soft-deprecated
-
-<!-- .element: class="fragment" -->
-
-- Functions in newer versions don't overlap with older versions
-
-<!-- .element: class="fragment" -->
-
-**Notes:**
-
 - Upgrading function groups ensures that newer functions are clearly distinct from older ones.
 - This separation simplifies development and reduces confusion when interacting with nodes of different capabilities.
 - Developers can choose which version to rely on, knowing the functional boundaries.
-
----
-
-# Unstable Functions
-
-- Marked with the `unstable` version prefix
-
-<!-- .element: class="fragment" -->
-
-- No stability guarantees—functions can change without warning
-
-<!-- .element: class="fragment" -->
-
-- Useful for experimental or debugging utilities
-
-<!-- .element: class="fragment" -->
-
-**Notes:**
 
 - Unstable functions are meant for experimental use and may evolve or be removed at any time.
 - They are helpful for developers needing temporary functions for debugging or testing.
@@ -259,13 +199,29 @@ There was a turning point when they decided to write a proper spec with a set of
 
 ---
 
-# Audience:
+## Audiences
 
-## End-User Applications
+- **End-User Applications**
+  - Light-client support.
+  - Minimize risks on single-point of failure.
 
-- Focus on reading storage and submitting transactions<!-- .element: class="fragment" -->
-- Encourage and support for light-clients<!-- .element: class="fragment" -->
-- Minimize DoS attack vectors<!-- .element: class="fragment" -->
+<!-- .element: class="fragment" -->
+
+- **Node Operators**
+  - Node monitoring
+
+<!-- .element: class="fragment" -->
+
+- **Oracles & Bridges**
+  - Automated interaction with the blockchain
+
+<!-- .element: class="fragment" -->
+
+- **Archivers / Indexers**
+  - Access to historical blockchain data
+  - Focus on finalized blocks
+
+<!-- .element: class="fragment" -->
 
 **Notes:**
 
@@ -273,57 +229,13 @@ There was a turning point when they decided to write a proper spec with a set of
 - Light clients, which don't hold full blockchain storage, are encouraged for better usability.
 - The API design mitigates potential DoS vulnerabilities while ensuring precise and efficient operations.
 
----
-
-# Audience:
-
-## Node Operators
-
-- Focus on monitoring and administrative operations
-
-<!-- .element: class="fragment" -->
-
-- Stable functions for scripting and automation
-
-<!-- .element: class="fragment" -->
-
-- CLI-friendly tools (e.g., `websocat`)
-
-<!-- .element: class="fragment" -->
-
-**Notes:**
-
 - Node operators require tools to monitor and manage nodes efficiently.
 - Stability in API functions is essential for reliable scripting and automation.
 - Tools like `websocat` facilitate interaction with JSON-RPC through WebSockets.
 
----
-
-# Audience:
-
-## Oracles & Bridges
-
-- Automated interaction with the blockchain<!-- .element: class="fragment" -->
-- Similar requirements as end-user applications<!-- .element: class="fragment" -->
-- Focus on stability and reliability<!-- .element: class="fragment" -->
-
-**Notes:**
-
 - Oracles and bridges require reliable and automated blockchain interaction.
 - Although automated, their operational needs align with those of end-user-facing applications.
 - Ensuring security and stability is paramount.
-
----
-
-# Audience:
-
-## Archivers / Indexers
-
-- Access to historical blockchain data<!-- .element: class="fragment" -->
-- Focus on finalized blocks<!-- .element: class="fragment" -->
-- Stable and easy-to-use functions<!-- .element: class="fragment" -->
-
-**Notes:**
 
 - Archivers need to access and analyze past blockchain states, focusing on finalized data.
 - The API ensures stability and ease of use, simplifying data retrieval for archival purposes.
@@ -357,6 +269,8 @@ There was a turning point when they decided to write a proper spec with a set of
 <!-- .element: class="fragment" -->
 
 **Notes:**
+
+TODO
 
 - Encourage the audience to ask questions about their specific use cases or integration concerns.
 - Refer to the full objectives document for detailed insights and ongoing updates.
