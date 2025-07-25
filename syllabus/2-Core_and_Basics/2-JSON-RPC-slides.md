@@ -11,14 +11,19 @@ description: JSON-RPC Spec
 
 ## What you will learn:
 
-- What is JSON-RPC (v2)<!-- .element: class="fragment" -->
-  - Its stateless design<!-- .element: class="fragment" -->
-  - Conventions to make it stateful<!-- .element: class="fragment" -->
-- (Substrate) JSON-RPC Spec<!-- .element: class="fragment" -->
-  - Objectives<!-- .element: class="fragment" -->
-  - Versioning<!-- .element: class="fragment" -->
-  - Groups of functions<!-- .element: class="fragment" -->
-  - Overview<!-- .element: class="fragment" -->
+- What is JSON-RPC (v2)
+  - Its stateless design
+  - Conventions to make it stateful
+
+<!-- .element: class="fragment" -->
+
+- (Substrate) JSON-RPC Spec
+  - Objectives
+  - Versioning
+  - Groups of functions
+  - Overview
+
+<!-- .element: class="fragment" -->
 
 ---
 
